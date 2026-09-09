@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fatbruin — 一只热爱生活的胖熊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
+<link rel="stylesheet" href="{{CSS_BASE}}">
+<style>
+html{scroll-behavior:smooth}
+:root{--card:rgba(249,243,231,.96)}
+#scene canvas{touch-action:pan-y}
+#loading{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#d9cbb0;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-2);transition:opacity .6s;text-transform:uppercase}
+body.ready #loading{opacity:0;pointer-events:none}
+
+/* wood-grain panel */
+.panel{position:relative;max-width:600px;padding:38px 40px 40px;border:1px solid var(--line);border-radius:4px;background:
+ repeating-linear-gradient(91deg,rgba(138,101,64,.055) 0 2px,transparent 2px 7px),
+ repeating-linear-gradient(89deg,rgba(90,65,48,.05) 0 1px,transparent 1px 13px),
+ var(--card);
+ backdrop-filter:blur(2px);box-shadow:0 18px 44px rgba(50,36,20,.22),inset 0 1px 0 rgba(255,255,255,.5)}
+.panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--moss),var(--pine));border-radius:4px 0 0 4px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 26px;background:linear-gradient(180deg,rgba(217,203,176,.92),rgba(217,203,176,0))}
+.brand{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.03em}
+.brand span{color:var(--amber)}
+.navlinks{display:flex;gap:2px;padding:4px;background:rgba(249,243,231,.72);border:1px solid var(--line);border-radius:999px}
+nav a{padding:6px 15px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);white-space:nowrap}
+nav a:hover{background:rgba(111,143,82,.16);color:var(--ink);text-decoration:none}
+nav a.cur{background:var(--pine);color:#f3ead8}
+
+main{position:relative;z-index:10}
+section{min-height:100svh;display:flex;align-items:center;padding:120px 6vw 90px}
+section.right{justify-content:flex-end}
+section.left{justify-content:flex-start}
+section.mid{justify-content:center}
+
+.eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-2);margin:0 0 10px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+h2{font-family:var(--disp);font-size:clamp(28px,3.4vw,40px);letter-spacing:-.03em;margin:0 0 22px;font-weight:600;line-height:1.15}
+p{text-wrap:pretty}
+
+/* hero */
+#hero .panel{border:none;box-shadow:none;padding:26px 34px 30px 30px;max-width:min(560px,52vw);background:radial-gradient(120% 110% at 20% 40%,rgba(243,234,216,.92),rgba(243,234,216,.55) 70%,transparent);border-radius:8px}
+#hero .panel::before{display:none}
+h1{font-family:var(--disp);font-size:clamp(56px,10vw,124px);line-height:.84;letter-spacing:-.05em;margin:0;font-weight:800;color:var(--ink);text-shadow:0 3px 0 rgba(255,250,240,.45)}
+h1 em{font-style:normal;color:var(--clay)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--soil);margin:0 0 18px}
+.lede{font-family:var(--serif);font-size:clamp(17px,1.9vw,20px);line-height:1.8;max-width:21ch;margin:24px 0 0;color:var(--ink)}
+.hints{display:flex;gap:8px;flex-wrap:wrap;margin-top:32px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:6px 13px;border:1px solid var(--line);border-radius:999px;color:var(--soil);background:rgba(249,243,231,.7)}
+button.chip{cursor:pointer;font-family:var(--mono);border-color:var(--moss);color:var(--pine)}
+button.chip:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine)}
+#bearsay{position:fixed;left:50%;top:16%;transform:translate(-50%,8px);z-index:30;font-size:15px;background:#f9f3e7;border:1px solid var(--line);border-radius:16px;padding:8px 18px;box-shadow:0 10px 26px rgba(50,36,20,.2);opacity:0;transition:.35s cubic-bezier(.2,.8,.3,1);pointer-events:none;white-space:nowrap}
+#bearsay.on{opacity:1;transform:translate(-50%,-4px)}
+.freebtn{position:fixed;right:20px;bottom:20px;z-index:35;font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(249,243,231,.94);color:var(--pine);cursor:pointer;box-shadow:0 8px 22px rgba(50,36,20,.16);transition:.2s}
+.freebtn:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine)}
+body.freelook .freebtn{background:var(--clay);color:#f3ead8;border-color:var(--clay)}
+.freehelp{position:fixed;right:20px;bottom:64px;z-index:35;font-family:var(--mono);font-size:10.5px;line-height:1.9;letter-spacing:.06em;color:var(--soil);text-align:right;opacity:0;pointer-events:none;transition:.3s}
+body.freelook .freehelp{opacity:1}
+body.freelook main,body.freelook .scrollcue{opacity:.12;pointer-events:none;transition:opacity .35s}
+body.freelook{overflow:hidden}
+
+.scrollcue{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:20;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--soil);transition:opacity .4s}
+body.moved .scrollcue{opacity:0}
+
+/* about */
+.about p{margin:0 0 16px;font-size:16px}
+.facts{margin:26px 0 0;border-top:1px solid var(--line)}
+.facts div{display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px;line-height:1.6}
+.facts dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:0;padding-top:4px}
+.facts dd{margin:0}
+
+/* writing */
+.posts{margin:0;border-top:1px solid var(--line)}
+.post{display:block;padding:16px 12px 16px 0;border-bottom:1px solid var(--line);transition:.22s;border-radius:3px}
+.post:hover{background:rgba(111,143,82,.1);padding-left:12px;text-decoration:none}
+.post:hover .p-title{color:var(--clay)}
+.p-meta{display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-2);text-transform:uppercase}
+.p-title{font-family:var(--serif);font-weight:600;font-size:18px;line-height:1.5;color:var(--ink);margin:3px 0 3px;transition:.22s}
+.p-sum{font-size:14px;color:var(--ink-2);margin:0;line-height:1.65}
+.more{display:inline-block;margin-top:22px;font-family:var(--mono);font-size:12px;letter-spacing:.1em}
+
+/* timeline */
+#timeline .panel{max-width:660px}
+.tl{margin:0;padding:0 0 0 26px;list-style:none;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 26px 22px}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:-33px;top:7px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:2.5px solid var(--moss)}
+.tl li.now::before{background:var(--clay);border-color:var(--clay)}
+.tl-year{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink-2)}
+.tl-role{font-family:var(--serif);font-size:17.5px;font-weight:600;margin:2px 0 4px}
+.tl-note{font-size:14px;color:var(--ink-2);margin:0;line-height:1.65}
+
+/* contact */
+#contact .panel{max-width:520px;text-align:left}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.links a{font-family:var(--mono);font-size:12.5px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(249,243,231,.6)}
+.links a:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine);text-decoration:none}
+.fine{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);letter-spacing:.08em;margin:30px 0 0}
+
+@media (max-width:820px){
+body{font-size:15px}
+nav{padding:12px 14px;flex-direction:column;align-items:stretch;gap:8px}
+.brand{text-align:center}
+.navlinks{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}
+section{padding:170px 18px 80px;min-height:100svh;align-items:flex-end;justify-content:center!important}
+#hero{align-items:center}
+.panel,#hero .panel{max-width:100%;width:100%;padding:26px 22px 28px}
+.facts div{grid-template-columns:78px 1fr;gap:10px}
+#bearsay{top:auto;bottom:78px}
+}
+</style></head>
+<body>
+<div id="loading">loading the island…</div>
+<div id="scene"></div>
+<div id="bearsay">唔……</div>
+<p class="scrollcue">向下滚动 · scroll to travel</p>
+<div class="freehelp">左键拖动 · 旋转<br>滚轮 · 缩放<br>右键拖动 · 平移<br>Esc · 退出</div>
+<button class="freebtn" id="freelook">自由视角</button>
+
+<nav>
+<div class="brand">fat<span>bruin</span></div>
+<div class="navlinks"><a href="#hero">首页</a><a href="#about">关于</a><a href="#writing">文章</a><a href="#timeline">经历</a><a href="#contact">联系</a></div>
+</nav>
+
+<main>
+<section id="hero" class="left" data-station="hero" data-screen-label="Hero">
+<div class="panel">
+<p class="kicker">Mobile / AI Engineer · Shanghai</p>
+<h1>fat<em>bruin</em></h1>
+<p class="lede">一只热爱生活的胖熊。写移动端,也写 AI。住在这座会飘的小岛上。</p>
+<div class="hints"><button class="chip" id="poke">戳一下熊</button></div>
+</div>
+</section>
+
+<section id="about" class="right" data-station="about" data-screen-label="About">
+<div class="panel about">
+<p class="eyebrow">About / 关于</p>
+<h2>写代码的胖熊,<br>顺便过好日子</h2>
+<p>移动端与 AI 工程师。做过 iOS、Android 和跨端框架,现在更多时间花在把模型能力塞进真实产品里——推理延迟、端上部署、以及那些「demo 很惊艳、上线就翻车」的问题。</p>
+<p>信一句话:先把东西跑起来,再谈优雅。剩下的时间用来做饭、走路、看云,以及给自己盖一座这样的小岛。</p>
+<dl class="facts">
+<div><dt>Now</dt><dd>端侧推理与移动端 AI 体验</dd></div>
+<div><dt>Stack</dt><dd>Swift · Kotlin · Python · three.js</dd></div>
+<div><dt>Focus</dt><dd>On-device LLM / 多模态交互</dd></div>
+<div><dt>Off hours</dt><dd>做饭、citywalk、拍云</dd></div>
+<div><dt>Weight</dt><dd>据熊自称 92 kg</dd></div>
+</dl>
+</div>
+</section>
+
+<section id="writing" class="left" data-station="writing" data-screen-label="Writing">
+<div class="panel">
+<p class="eyebrow">Writing / 文章</p>
+<h2>写下来的东西</h2>
+<div class="posts" id="posts">{{POSTS}}</div>
+<a class="more" href="{{BASE}}posts/">全部文章 →</a>
+</div>
+</section>
+
+<section id="timeline" class="right" data-station="timeline" data-screen-label="Timeline">
+<div class="panel">
+<p class="eyebrow">Timeline / 经历</p>
+<h2>一路走过的石阶</h2>
+<ul class="tl">
+<li class="now"><p class="tl-year">2024 — Now</p><p class="tl-role">Senior AI Engineer</p><p class="tl-note">负责端侧模型推理与移动端 AI 交互,把多模态能力落进日常功能里。</p></li>
+<li><p class="tl-year">2021 — 2024</p><p class="tl-role">Mobile Tech Lead</p><p class="tl-note">带一个五人的客户端团队,重构了架构与发版流程,崩溃率降到 0.1% 以下。</p></li>
+<li><p class="tl-year">2018 — 2021</p><p class="tl-role">iOS Engineer</p><p class="tl-note">从零参与一款千万级用户产品,负责性能优化与设计系统落地。</p></li>
+<li><p class="tl-year">2014 — 2018</p><p class="tl-role">B.Eng, Computer Science</p><p class="tl-note">写了第一个 App,以及第一只很丑的 3D 熊。</p></li>
+</ul>
+</div>
+</section>
+
+<section id="contact" class="mid" data-station="contact" data-screen-label="Contact">
+<div class="panel">
+<p class="eyebrow">Contact / 联系</p>
+<h2>来聊聊</h2>
+<p style="margin:0 0 18px;color:var(--ink-2);font-size:15.5px">有意思的项目、想合作的事,或者只是想说句话,都欢迎。</p>
+<div class="links"><a href="mailto:hi@fatbruin.me">hi@fatbruin.me</a><a href="#">GitHub</a><a href="#">X / Twitter</a><a href="#">微信公众号</a><a href="{{BASE}}rss.xml">RSS</a></div>
+<p class="fine">© 2026 fatbruin · 内容为占位文案,替换即可</p>
+</div>
+</section>
+</main>
+
+<script type="module" src="{{BASE}}island.js"></script>
+<script>addEventListener('scroll',()=>{if(scrollY>60)document.body.classList.add('moved')},{passive:true});
+</script>
+</body></html>

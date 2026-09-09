@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}} — fatbruin</title>
+<meta name="description" content="{{SUMMARY}}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
+<link rel="stylesheet" href="{{CSS_BASE}}">
+<link rel="stylesheet" href="{{CSS_POST}}"></head>
+<body class="post{{NOTOC}}">
+<div id="scene"></div>
+<div class="topbar"><div class="navl"><a class="back" href="{{BASE}}#writing">← 回到岛上</a><a class="back nav-fallback" href="{{BASE}}posts/">全部文章 →</a></div><div class="brand">fat<span>bruin</span></div></div>
+<main>{{TOC}}<article id="art">{{ARTICLE}}</article></main>
+
+<div id="mascot" title="戳一下">
+  <div id="m-say"></div>
+  <button id="m-top" title="回到顶部" aria-label="回到顶部">↑</button>
+</div>
+<script type="module" src="{{BASE}}island.js"></script>
+<script type="module" src="{{BASE}}mascot.js"></script>
+<script>
+addEventListener('keydown', function(e){
+  var P = {{NAV_JSON}};
+  if (e.key === 'ArrowLeft'  && P.prev) location.href = P.prev;
+  if (e.key === 'ArrowRight' && P.next) location.href = P.next;
+  if (e.key === 'Escape') location.href = '{{BASE}}#writing';
+});
+</script>
+<script>
+// 大纲高亮:滚动容器是 #art(不是 window),直接按滚动位置算当前节最可靠
+(function(){
+  var toc = document.querySelector('.toc');
+  if (!toc) return;
+  var art = document.getElementById('art');
+  var links = [].slice.call(toc.querySelectorAll('a'));
+  var map = {};
+  // id 本身已是百分号编码,直接用原始 href 做 key,不要 decode
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  var heads = [].slice.call(art.querySelectorAll('h2[id],h3[id]'));
+  if (!heads.length) return;
+  var cur = null;
+
+  function paint(){
+    var top = art.getBoundingClientRect().top + 100;   // 判定线:卡片顶部下方 100px
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++){
+      if (heads[i].getBoundingClientRect().top <= top) found = heads[i]; else break;
+    }
+    // 已滚到底时强制选中最后一节,否则末节永远高亮不到
+    if (art.scrollTop + art.clientHeight >= art.scrollHeight - 4) found = heads[heads.length - 1];
+    if (found === cur) return;
+    cur = found;
+    links.forEach(function(a){ a.classList.remove('on'); });
+    var a = map[found.id];
+    if (!a) return;
+    a.classList.add('on');
+    var box = a.getBoundingClientRect(), tb = toc.getBoundingClientRect();
+    if (box.top < tb.top || box.bottom > tb.bottom) a.scrollIntoView({block:'nearest'});
+  }
+
+  var tick = false;
+  art.addEventListener('scroll', function(){
+    if (tick) return;
+    tick = true;
+    requestAnimationFrame(function(){ tick = false; paint(); });
+  }, {passive:true});
+
+  toc.addEventListener('click', function(e){
+    var a = e.target.closest('a'); if (!a) return;
+    var t = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+    if (!t) return;
+    e.preventDefault();
+    art.scrollTo({ top: art.scrollTop + t.getBoundingClientRect().top - art.getBoundingClientRect().top - 24, behavior:'smooth' });
+    history.replaceState(null, '', a.getAttribute('href'));
+  });
+  paint();
+})();
+</script>
+<script>
+// 代码块复制
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('.cb-c');
+  if (!btn) return;
+  var pre = btn.parentElement.querySelector('pre');
+  if (!pre) return;
+  var text = pre.innerText;
+  var done = function(){
+    btn.textContent = '已复制'; btn.classList.add('ok');
+    setTimeout(function(){ btn.textContent = '复制'; btn.classList.remove('ok'); }, 1600);
+  };
+  // clipboard API 需要安全上下文(https 或 localhost),否则回退到 execCommand
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done, fallback);
+  } else fallback();
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (err) { btn.textContent = '复制失败'; }
+    document.body.removeChild(ta);
+  }
+});
+</script>
+</body></html>

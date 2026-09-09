@@ -1,0 +1,69 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # 自动判定站点根路径:
+      #   用户站 <name>.github.io        → base = /
+      #   项目站 <name>.github.io/<repo>/ → base = /<repo>/
+      # 以后绑自定义域名(根路径),把下面整步删掉、BASE_PATH 改成 / 即可
+      - name: 计算 base path
+        id: base
+        run: |
+          REPO='${{ github.event.repository.name }}'
+          OWNER='${{ github.repository_owner }}'
+          if [ "$(echo "$REPO" | tr 'A-Z' 'a-z')" = "$(echo "$OWNER" | tr 'A-Z' 'a-z').github.io" ]; then
+            echo "path=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "path=/$REPO/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - run: npm run build
+        env:
+          BASE_PATH: ${{ steps.base.outputs.path }}
+          # rss.xml / sitemap.xml 需要完整站点地址;Pages 的 URL 由 configure-pages 之前无法拿到,
+          # 这里按 owner/repo 推导,绑自定义域名后改成域名即可
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+
+      # GitHub Pages 默认跑 Jekyll,会忽略下划线开头的文件
+      - run: touch dist/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

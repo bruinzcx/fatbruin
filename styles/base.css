@@ -1,0 +1,15 @@
+/* 两个页面共享的基础层:设计变量、reset、链接、3D 场景容器 */
+:root{
+--moss:#6f8f52;--pine:#3f6640;--bark:#5a4130;--soil:#6b5033;--amber:#b07a35;--clay:#8a4f3c;
+--paper:#f3ead8;--line:#cdbb9c;--ink:#2a2118;--ink-2:#6a5946;
+--sans:"Noto Sans SC",-apple-system,"Helvetica Neue",sans-serif;
+--disp:"Bricolage Grotesque","Noto Sans SC",sans-serif;
+--serif:"Noto Serif SC",Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#d9cbb0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased}
+a{color:var(--pine);text-decoration:none;text-underline-offset:4px}
+a:hover{color:var(--amber);text-decoration:underline}
+#scene{position:fixed;inset:0;z-index:0}
+#scene canvas{display:block;width:100%;height:100%}

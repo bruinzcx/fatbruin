@@ -1,0 +1,35 @@
+# fatbruin — Nginx 配置示例
+# 把 dist/ 传到服务器后,参考这份配置
+
+server {
+    listen 80;
+    server_name blog.example.com;
+
+    root /var/www/fatbruin;   # 指向 dist/ 的内容
+    index index.html;
+
+    # /posts/xxx/ 自动读取该目录下的 index.html
+    location / {
+        try_files $uri $uri/ $uri/index.html =404;
+    }
+
+    # HTML 不缓存,保证发新文章后立即可见
+    location ~* \.html$ {
+        add_header Cache-Control "no-cache";
+    }
+
+    # 带内容哈希的 CSS(styles/xxx.a1b2c3.css)改了文件名就变,可永久缓存
+    location ~* /styles/.+\.[0-9a-f]{8}\.css$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # 其他静态资源
+    location ~* \.(js|css|png|jpg|jpeg|gif|webp|svg|woff2?)$ {
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    gzip on;
+    gzip_types text/html text/css application/javascript image/svg+xml;
+}
