@@ -25,6 +25,8 @@ a:hover{color:var(--amber);text-decoration:underline}
 /* 2D 小屋:.room 按插画原始像素尺寸排版,由 scene2d.js 整体平移缩放 */
 .room{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
 .room img{display:block;user-select:none;-webkit-user-drag:none}
+/* 屏蔽 iOS 长按物件 / 图片弹出的链接预览与「存储图像」菜单 */
+.room,.room *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .room-img{width:100%;height:100%;
  /* 插画四周渐隐融进背景色,避免边缘色差显出矩形;房间本体位于中部(宽 22%~78%、高 4%~96%),不受影响 */
  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent,#000 3%,#000 97%,transparent);

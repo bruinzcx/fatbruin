@@ -1,5 +1,5 @@
 /* 2D 小屋场景:一张等距房间插画 + 代码层氛围动效(窗光浮尘 / 台灯 / 屏幕 / 热气 / 熊)。
-   首页:单屏房间,点物件 / 导航(URL hash)时镜头推近该物件、右侧抽屉滑出;其他页面:只做背景,随鼠标轻微视差。
+   首页:单屏房间,点物件 / 导航(URL hash)时镜头推近该物件、内容以居中弹窗展示;其他页面:只做背景,随鼠标轻微视差。
    坐标全部用插画的百分比,换图时只需改 ROOM 与各物件位置。 */
 const host = document.getElementById('scene');
 const MOBILE = matchMedia('(max-width:820px)').matches;
@@ -106,7 +106,11 @@ function route() {
 const goHome = () => { if (station !== 'hero') location.hash = ''; };
 addEventListener('hashchange', route);
 addEventListener('keydown', e => { if (e.key === 'Escape') goHome(); });
-// 点房间空白处收起抽屉
+// 触屏长按房间时屏蔽系统菜单(Android 的链接 / 图片菜单);鼠标右键保持不变
+let lastPointer = 'mouse';
+host.addEventListener('pointerdown', e => { lastPointer = e.pointerType; });
+host.addEventListener('contextmenu', e => { if (lastPointer === 'touch') e.preventDefault(); });
+// 点房间空白处关闭弹窗
 host.addEventListener('click', e => { if (!e.target.closest('.hs')) goHome(); });
 
 let px = 0, py = 0;
