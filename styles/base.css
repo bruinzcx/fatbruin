@@ -18,8 +18,9 @@ a:hover{color:var(--amber);text-decoration:underline}
 /* 晨昏:夜间配色(暖棕夜灯)。html.night 由各页开头的内联脚本在渲染前设置,避免闪白 */
 .night{--paper:#2b241f;--line:#4a3f35;--ink:#efe4cd;--ink-2:#b9a993;--bark:#d7b98f;--soil:#c9a77f;--clay:#d58c68;--link:#b5c78a;
 --bg:#1f1a16;--surface:#2b241f;--surface-rgb:43,36,31;--tint:rgba(239,228,205,.1);--tint-2:rgba(239,228,205,.05);--hover:rgba(181,199,138,.12);--row-line:rgba(239,228,205,.12)}
-/* 点「晨昏」切换时短暂加上,让界面颜色和房间画面一起淡变 */
-.theme-anim,.theme-anim *{transition:background-color .9s,color .9s,border-color .9s!important}
+/* 点「晨昏」切换时短暂加上,让界面颜色和房间画面一起淡变。
+   时长与房间图层一致;opacity / filter 必须带上,否则会覆盖房间、熊、便签自身的过渡导致瞬切 */
+.theme-anim,.theme-anim *{transition:background-color 1.2s,color 1.2s,border-color 1.2s,opacity 1.2s,filter 1.2s!important}
 .night #scene{background:#58617a}
 /* 2D 小屋:.room 按插画原始像素尺寸排版,由 scene2d.js 整体平移缩放 */
 .room{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}

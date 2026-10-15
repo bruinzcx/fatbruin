@@ -164,7 +164,7 @@ async function setNight(on, animate) {
     }));
   }
   const root = document.documentElement;
-  if (animate) { root.classList.add('theme-anim'); setTimeout(() => root.classList.remove('theme-anim'), 1000); }
+  if (animate) { root.classList.add('theme-anim'); setTimeout(() => root.classList.remove('theme-anim'), 1300); }
   root.classList.toggle('night', on);
 }
 // 初始晨昏已由页面开头的内联脚本写到 html.night,这里只负责补加载夜景图
