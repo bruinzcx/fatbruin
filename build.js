@@ -146,6 +146,7 @@ const fill = (t, vars) => t.replace(/\{\{(\w+)\}\}/g, (_, k) => (k in vars ? var
 
 function renderIndex(posts, template, css = {}) {
   const list = posts
+    .slice(0, 4) // 首页只放最新 4 篇,其余走「全部文章」
     .map(
       (p) =>
         `<a class="post" href="${u(`posts/${p.slug}/`)}">` +
