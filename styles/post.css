@@ -1,5 +1,5 @@
 /* 文章详情页样式 */
-#scene::after{content:"";position:absolute;inset:0;background:rgba(26,19,12,.82)}
+#scene::after{content:"";position:absolute;inset:0;background:rgba(30,22,14,.68)}
 .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 26px;background:linear-gradient(180deg,rgba(35,26,16,.55),rgba(35,26,16,0))}
 .back{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#efe4cd;padding:8px 15px;border:1px solid rgba(239,228,205,.45);border-radius:999px}
 .back:hover{background:#efe4cd;color:var(--ink);text-decoration:none}
