@@ -1,5 +1,5 @@
 /* 文章详情页样式 */
-#scene::after{content:"";position:absolute;inset:0;background:rgba(38,28,18,.5)}
+#scene::after{content:"";position:absolute;inset:0;background:rgba(26,19,12,.82)}
 .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 26px;background:linear-gradient(180deg,rgba(35,26,16,.55),rgba(35,26,16,0))}
 .back{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#efe4cd;padding:8px 15px;border:1px solid rgba(239,228,205,.45);border-radius:999px}
 .back:hover{background:#efe4cd;color:var(--ink);text-decoration:none}
@@ -138,7 +138,12 @@ body.no-toc .nav-fallback{display:inline-block}
 }
 #mascot:hover{transform:translateY(-4px) scale(1.03)}
 #mascot:active{transform:translateY(-1px) scale(.99)}
-#mascot canvas{display:block;width:100%;height:100%}
+#mascot .m-bear{position:absolute;inset:0;transform-origin:50% 100%;rotate:calc(var(--look,0) * 1deg);transition:rotate .5s ease-out;animation:m-breathe 3.2s ease-in-out infinite}
+#mascot .m-bear img{position:absolute;left:0;bottom:0;width:100%;height:auto;opacity:0;user-select:none;-webkit-user-drag:none}
+#mascot .m-bear img.on{opacity:1}
+#mascot .m-bear.hop{animation:m-hop .6s cubic-bezier(.3,1.6,.5,1),m-breathe 3.2s ease-in-out .6s infinite}
+@keyframes m-breathe{50%{transform:scale(1.015,1.025)}}
+@keyframes m-hop{30%{transform:translateY(-10%) scale(.96,1.05)}60%{transform:translateY(0) scale(1.05,.95)}}
 
 /* 说话气泡 */
 #m-say{

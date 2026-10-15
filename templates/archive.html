@@ -4,13 +4,12 @@
 <meta name="description" content="fatbruin 的全部文章索引,共 {{COUNT}} 篇。">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 <link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
 <link rel="stylesheet" href="{{CSS_BASE}}">
 <link rel="stylesheet" href="{{CSS_POST}}"></head>
 <body>
 <div id="scene"></div>
-<div class="topbar"><div class="navl"><a class="back" href="{{BASE}}#writing">← 回到岛上</a></div><div class="brand">fat<span>bruin</span></div></div>
+<div class="topbar"><div class="navl"><a class="back" href="{{BASE}}#writing">← 回到小屋</a></div><div class="brand">fat<span>bruin</span></div></div>
 <main><article id="art">
 <p class="meta"><span>ARCHIVE</span><span>共 {{COUNT}} 篇</span></p>
 <h1>全部文章</h1>
@@ -18,7 +17,7 @@
 {{ARCHIVE}}
 </article></main>
 
-<script type="module" src="{{BASE}}island.js"></script>
+<script type="module" src="{{BASE}}scene2d.js"></script>
 <script>
 addEventListener('keydown', function(e){ if (e.key === 'Escape') location.href = '{{BASE}}#writing'; });
 </script>

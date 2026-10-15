@@ -11,5 +11,60 @@
 body{margin:0;background:#d9cbb0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased}
 a{color:var(--pine);text-decoration:none;text-underline-offset:4px}
 a:hover{color:var(--amber);text-decoration:underline}
-#scene{position:fixed;inset:0;z-index:0}
-#scene canvas{display:block;width:100%;height:100%}
+#scene{position:fixed;inset:0;z-index:0;overflow:hidden;background:#eae3db;transition:background-color 1.2s}
+#scene.night{background:#59637c}
+/* 2D 小屋:.room 按插画原始像素尺寸排版,由 scene2d.js 整体平移缩放 */
+.room{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.room img{display:block;user-select:none;-webkit-user-drag:none}
+.room-img{width:100%;height:100%}
+.fx,.bear,.chair,.hs{position:absolute}
+.chair{pointer-events:none}
+.fx{pointer-events:none}
+.fx-beam{background:linear-gradient(115deg,rgba(255,236,190,.34),rgba(255,236,190,.08) 55%,transparent 80%);clip-path:polygon(18% 0,42% 0,100% 100%,52% 100%);mix-blend-mode:screen;animation:beam 7s ease-in-out infinite}
+.fx-dust{position:absolute;inset:0}
+.fx-dust i{position:absolute;width:7px;height:7px;border-radius:50%;background:rgba(255,246,220,.9);filter:blur(1px);animation:mote linear infinite}
+.fx-glow{border-radius:50%;mix-blend-mode:screen}
+.fx-lamp{background:radial-gradient(closest-side,rgba(255,214,140,.55),rgba(255,214,140,.18) 55%,transparent);animation:glow 5s ease-in-out infinite}
+.fx-screen{background:radial-gradient(closest-side,rgba(255,250,225,.5),transparent);animation:glow 2.6s ease-in-out infinite}
+.fx-steam i{position:absolute;bottom:0;left:30%;width:40%;height:45%;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(6px);opacity:0;animation:steam 3.6s ease-out infinite}
+.fx-steam i:nth-child(2){left:10%;animation-delay:1.2s}
+.fx-steam i:nth-child(3){left:45%;animation-delay:2.4s}
+.bear{transform-origin:50% 92%;animation:breathe 3.4s ease-in-out infinite}
+.bear img{position:absolute;inset:0;width:100%;height:100%}
+.bear-head{transform-origin:51.5% 41.7%;rotate:calc(var(--look,0) * 1deg);transition:rotate .4s ease-out;animation:sway 6s ease-in-out infinite}
+.bear-head.shake{animation:shake .7s ease-in-out,sway 6s ease-in-out .7s infinite}
+.room-night{position:absolute;left:0;top:0}
+.room-night,.chair-night{opacity:0;transition:opacity 1.2s}
+.night .room-night,.night .chair-night{opacity:1}
+.bear{transition:filter 1.2s}
+.night .bear{filter:brightness(.58) saturate(1.15)}
+.fx-beam{transition:visibility 0s 1.2s}
+.night .fx-beam{visibility:hidden;transition:none}
+.cork{position:absolute;pointer-events:none}
+.cork>*{position:absolute;inset:0}
+.cork-patch{background:#a85a2a;transition:background-color 1.2s}
+.night .cork-patch{background:#6e2c14}
+.note img{position:absolute;inset:0;width:100%;height:100%}
+.note .n-night{opacity:0;transition:opacity 1.2s}
+.night .note .n-night{opacity:1}
+.note.flick{animation:flick .9s cubic-bezier(.3,.7,.4,1)}
+@keyframes flick{25%{transform:translateY(-1.2%) rotate(calc(var(--dir,1) * -5deg))}55%{transform:rotate(calc(var(--dir,1) * 2.5deg))}80%{transform:rotate(calc(var(--dir,1) * -1deg))}}
+.bear.hop{animation:hop .6s cubic-bezier(.3,1.6,.5,1),breathe 3.4s ease-in-out .6s infinite}
+.hs{display:block;border-radius:28px;cursor:pointer}
+.hs:hover{text-decoration:none}
+.hs::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(closest-side,rgba(255,240,200,.38),transparent);opacity:0;transition:opacity .3s}
+.hs span{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:30px;letter-spacing:.06em;padding:10px 26px;border-radius:999px;background:rgba(249,243,231,.96);border:2px solid var(--line);color:var(--pine);opacity:0;transition:opacity .3s}
+.hs:hover::before,.hs:focus-visible::before,.hs:hover span,.hs:focus-visible span{opacity:1}
+/* 可点提示:物件中心一颗缓慢呼吸的光点,打开抽屉后隐去 */
+.hs .dot{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:rgba(255,248,226,.95);box-shadow:0 0 0 0 rgba(255,236,190,.7);animation:dot 2.6s ease-out infinite;transition:opacity .4s}
+.hs:hover .dot,body.open .hs .dot{opacity:0}
+@keyframes dot{0%{box-shadow:0 0 0 0 rgba(255,236,190,.75)}70%,100%{box-shadow:0 0 0 30px rgba(255,236,190,0)}}
+@keyframes beam{50%{opacity:.6}}
+@keyframes glow{50%{opacity:.7}}
+@keyframes mote{0%{transform:translate(0,0);opacity:0}15%,85%{opacity:.85}100%{transform:translate(60px,-140px);opacity:0}}
+@keyframes steam{0%{transform:translateY(0) scale(.6);opacity:0}30%{opacity:.7}100%{transform:translateY(-160%) scale(1.4);opacity:0}}
+@keyframes sway{25%{transform:rotate(-2deg) translateY(-.6%)}75%{transform:rotate(1.5deg)}}
+@keyframes shake{20%{transform:rotate(-7deg)}45%{transform:rotate(6deg)}70%{transform:rotate(-3deg)}}
+@keyframes breathe{50%{transform:scale(1.012,1.018)}}
+@keyframes hop{30%{transform:translateY(-6%) scale(.97,1.05)}60%{transform:translateY(0) scale(1.05,.95)}}
+@media (prefers-reduced-motion:reduce){.room *{animation:none!important}}

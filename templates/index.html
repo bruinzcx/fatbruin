@@ -3,13 +3,11 @@
 <title>fatbruin — 一只热爱生活的胖熊</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 <link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
 <link rel="stylesheet" href="{{CSS_BASE}}">
 <style>
-html{scroll-behavior:smooth}
+html,body{height:100%;overflow:hidden}
 :root{--card:rgba(249,243,231,.96)}
-#scene canvas{touch-action:pan-y}
 #loading{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#d9cbb0;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-2);transition:opacity .6s;text-transform:uppercase}
 body.ready #loading{opacity:0;pointer-events:none}
 
@@ -29,11 +27,28 @@ nav a{padding:6px 15px;border-radius:999px;font-size:13px;font-weight:500;color:
 nav a:hover{background:rgba(111,143,82,.16);color:var(--ink);text-decoration:none}
 nav a.cur{background:var(--pine);color:#f3ead8}
 
-main{position:relative;z-index:10}
-section{min-height:100svh;display:flex;align-items:center;padding:120px 6vw 90px}
-section.right{justify-content:flex-end}
-section.left{justify-content:flex-start}
-section.mid{justify-content:center}
+/* 单屏房间:首屏标题浮在左侧,其余区块是居中弹窗,点物件 / 导航按 hash 打开 */
+main{position:fixed;inset:0;z-index:10;pointer-events:none}
+.panel{pointer-events:auto}
+#hero{position:absolute;left:6vw;top:50%;transform:translateY(-50%);transition:opacity .45s,transform .45s}
+body.open #hero{opacity:0;transform:translate(-24px,-50%);pointer-events:none}
+body.open #hero .panel{pointer-events:none}
+.drawer{position:absolute;left:50%;top:50%;width:min(860px,calc(100vw - 64px));max-height:calc(100svh - 130px);display:flex;opacity:0;visibility:hidden;transform:translate(-50%,-46%) scale(.96);transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .35s,visibility 0s .5s}
+.drawer.on{opacity:1;visibility:visible;transform:translate(-50%,-50%);transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.drawer .panel{max-width:none;width:100%;overflow-y:auto;overscroll-behavior:contain;padding:48px 60px 52px}
+/* 弹窗居中后放大字号,提升可读性 */
+.drawer h2{font-size:clamp(30px,3.6vw,44px)}
+.drawer .about p{font-size:17.5px;line-height:1.95}
+.drawer .facts div{font-size:15.5px}
+.drawer .p-title{font-size:20px}
+.drawer .p-sum{font-size:15px}
+.drawer .tl-role{font-size:19px}
+.drawer .tl-note{font-size:15.5px}
+.drawer .links a{font-size:13.5px;padding:9px 17px}
+/* 弹窗打开时压暗房间,点暗处即关闭(点击穿透到 #scene) */
+#scene::after{content:"";position:absolute;inset:0;background:rgba(40,30,20,.32);opacity:0;transition:opacity .45s;pointer-events:none}
+body.open #scene::after{opacity:1}
+.close{display:inline-block;margin:0 0 18px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--soil)}
 
 .eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-2);margin:0 0 10px}
 .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -53,16 +68,9 @@ button.chip{cursor:pointer;font-family:var(--mono);border-color:var(--moss);colo
 button.chip:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine)}
 #bearsay{position:fixed;left:50%;top:16%;transform:translate(-50%,8px);z-index:30;font-size:15px;background:#f9f3e7;border:1px solid var(--line);border-radius:16px;padding:8px 18px;box-shadow:0 10px 26px rgba(50,36,20,.2);opacity:0;transition:.35s cubic-bezier(.2,.8,.3,1);pointer-events:none;white-space:nowrap}
 #bearsay.on{opacity:1;transform:translate(-50%,-4px)}
-.freebtn{position:fixed;right:20px;bottom:20px;z-index:35;font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(249,243,231,.94);color:var(--pine);cursor:pointer;box-shadow:0 8px 22px rgba(50,36,20,.16);transition:.2s}
-.freebtn:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine)}
-body.freelook .freebtn{background:var(--clay);color:#f3ead8;border-color:var(--clay)}
-.freehelp{position:fixed;right:20px;bottom:64px;z-index:35;font-family:var(--mono);font-size:10.5px;line-height:1.9;letter-spacing:.06em;color:var(--soil);text-align:right;opacity:0;pointer-events:none;transition:.3s}
-body.freelook .freehelp{opacity:1}
-body.freelook main,body.freelook .scrollcue{opacity:.12;pointer-events:none;transition:opacity .35s}
-body.freelook{overflow:hidden}
 
-.scrollcue{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:20;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--soil);transition:opacity .4s}
-body.moved .scrollcue{opacity:0}
+body.night nav{background:linear-gradient(180deg,rgba(70,79,104,.92),rgba(70,79,104,0))}
+body.night .brand{color:#f3ead8}
 
 /* about */
 .about p{margin:0 0 16px;font-size:16px}
@@ -82,7 +90,6 @@ body.moved .scrollcue{opacity:0}
 .more{display:inline-block;margin-top:22px;font-family:var(--mono);font-size:12px;letter-spacing:.1em}
 
 /* timeline */
-#timeline .panel{max-width:660px}
 .tl{margin:0;padding:0 0 0 26px;list-style:none;border-left:2px solid var(--line)}
 .tl li{position:relative;padding:0 0 26px 22px}
 .tl li:last-child{padding-bottom:0}
@@ -93,7 +100,7 @@ body.moved .scrollcue{opacity:0}
 .tl-note{font-size:14px;color:var(--ink-2);margin:0;line-height:1.65}
 
 /* contact */
-#contact .panel{max-width:520px;text-align:left}
+#contact .panel{text-align:left}
 .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
 .links a{font-family:var(--mono);font-size:12.5px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(249,243,231,.6)}
 .links a:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine);text-decoration:none}
@@ -104,42 +111,42 @@ body{font-size:15px}
 nav{padding:12px 14px;flex-direction:column;align-items:stretch;gap:8px}
 .brand{text-align:center}
 .navlinks{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}
-section{padding:170px 18px 80px;min-height:100svh;align-items:flex-end;justify-content:center!important}
-#hero{align-items:center}
+#hero{left:14px;right:14px;top:auto;bottom:16px;transform:none}
+body.open #hero{transform:translateY(20px)}
+.drawer{width:calc(100vw - 28px);max-height:calc(100svh - 150px);top:calc(50% + 40px)}
+.drawer .panel{padding:28px 22px 30px}
 .panel,#hero .panel{max-width:100%;width:100%;padding:26px 22px 28px}
 .facts div{grid-template-columns:78px 1fr;gap:10px}
-#bearsay{top:auto;bottom:78px}
+#bearsay{top:52%;bottom:auto}
 }
 </style></head>
 <body>
-<div id="loading">loading the island…</div>
+<div id="loading">loading the room…</div>
 <div id="scene"></div>
 <div id="bearsay">唔……</div>
-<p class="scrollcue">向下滚动 · scroll to travel</p>
-<div class="freehelp">左键拖动 · 旋转<br>滚轮 · 缩放<br>右键拖动 · 平移<br>Esc · 退出</div>
-<button class="freebtn" id="freelook">自由视角</button>
 
 <nav>
 <div class="brand">fat<span>bruin</span></div>
-<div class="navlinks"><a href="#hero">首页</a><a href="#about">关于</a><a href="#writing">文章</a><a href="#timeline">经历</a><a href="#contact">联系</a></div>
+<div class="navlinks"><a href="#">首页</a><a href="#about">关于</a><a href="#writing">文章</a><a href="#timeline">经历</a><a href="#contact">联系</a></div>
 </nav>
 
 <main>
-<section id="hero" class="left" data-station="hero" data-screen-label="Hero">
+<section id="hero" data-station="hero" data-screen-label="Hero">
 <div class="panel">
 <p class="kicker">Mobile / AI Engineer · Shanghai</p>
 <h1>fat<em>bruin</em></h1>
-<p class="lede">一只热爱生活的胖熊。写移动端,也写 AI。住在这座会飘的小岛上。</p>
+<p class="lede">一只热爱生活的胖熊。写移动端,也写 AI。住在这间暖烘烘的小屋里。</p>
 <div class="hints"><button class="chip" id="poke">戳一下熊</button></div>
 </div>
 </section>
 
-<section id="about" class="right" data-station="about" data-screen-label="About">
+<section id="about" class="drawer" data-station="about" data-screen-label="About">
 <div class="panel about">
+<a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">About / 关于</p>
 <h2>写代码的胖熊,<br>顺便过好日子</h2>
 <p>移动端与 AI 工程师。做过 iOS、Android 和跨端框架,现在更多时间花在把模型能力塞进真实产品里——推理延迟、端上部署、以及那些「demo 很惊艳、上线就翻车」的问题。</p>
-<p>信一句话:先把东西跑起来,再谈优雅。剩下的时间用来做饭、走路、看云,以及给自己盖一座这样的小岛。</p>
+<p>信一句话:先把东西跑起来,再谈优雅。剩下的时间用来做饭、走路、看云,以及把这间小屋收拾得更舒服一点。</p>
 <dl class="facts">
 <div><dt>Now</dt><dd>端侧推理与移动端 AI 体验</dd></div>
 <div><dt>Stack</dt><dd>Swift · Kotlin · Python · three.js</dd></div>
@@ -150,8 +157,9 @@ section{padding:170px 18px 80px;min-height:100svh;align-items:flex-end;justify-c
 </div>
 </section>
 
-<section id="writing" class="left" data-station="writing" data-screen-label="Writing">
+<section id="writing" class="drawer" data-station="writing" data-screen-label="Writing">
 <div class="panel">
+<a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">Writing / 文章</p>
 <h2>写下来的东西</h2>
 <div class="posts" id="posts">{{POSTS}}</div>
@@ -159,10 +167,11 @@ section{padding:170px 18px 80px;min-height:100svh;align-items:flex-end;justify-c
 </div>
 </section>
 
-<section id="timeline" class="right" data-station="timeline" data-screen-label="Timeline">
+<section id="timeline" class="drawer" data-station="timeline" data-screen-label="Timeline">
 <div class="panel">
+<a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">Timeline / 经历</p>
-<h2>一路走过的石阶</h2>
+<h2>软木板上钉着的那些年</h2>
 <ul class="tl">
 <li class="now"><p class="tl-year">2024 — Now</p><p class="tl-role">Senior AI Engineer</p><p class="tl-note">负责端侧模型推理与移动端 AI 交互,把多模态能力落进日常功能里。</p></li>
 <li><p class="tl-year">2021 — 2024</p><p class="tl-role">Mobile Tech Lead</p><p class="tl-note">带一个五人的客户端团队,重构了架构与发版流程,崩溃率降到 0.1% 以下。</p></li>
@@ -172,8 +181,9 @@ section{padding:170px 18px 80px;min-height:100svh;align-items:flex-end;justify-c
 </div>
 </section>
 
-<section id="contact" class="mid" data-station="contact" data-screen-label="Contact">
+<section id="contact" class="drawer" data-station="contact" data-screen-label="Contact">
 <div class="panel">
+<a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">Contact / 联系</p>
 <h2>来聊聊</h2>
 <p style="margin:0 0 18px;color:var(--ink-2);font-size:15.5px">有意思的项目、想合作的事,或者只是想说句话,都欢迎。</p>
@@ -183,7 +193,5 @@ section{padding:170px 18px 80px;min-height:100svh;align-items:flex-end;justify-c
 </section>
 </main>
 
-<script type="module" src="{{BASE}}island.js"></script>
-<script>addEventListener('scroll',()=>{if(scrollY>60)document.body.classList.add('moved')},{passive:true});
-</script>
+<script type="module" src="{{BASE}}scene2d.js"></script>
 </body></html>
