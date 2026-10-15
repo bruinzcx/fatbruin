@@ -39,6 +39,9 @@ body.open #hero .panel{pointer-events:none}
 .drawer{position:absolute;left:50%;top:50%;width:min(860px,calc(100vw - 64px));max-height:calc(100svh - 130px);display:flex;opacity:0;visibility:hidden;transform:translate(-50%,-46%) scale(.96);transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .35s,visibility 0s .5s}
 .drawer.on{opacity:1;visibility:visible;transform:translate(-50%,-50%);transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .35s}
 .drawer .panel{max-width:none;width:100%;overflow-y:auto;overscroll-behavior:contain;padding:48px 60px 52px}
+/* 左侧绿条挂在不滚动的弹窗框上,否则会随内容滚走、滚到底露出空白 */
+.drawer .panel::before{display:none}
+.drawer::before{content:"";position:absolute;left:0;top:0;bottom:0;z-index:1;width:5px;background:linear-gradient(180deg,var(--moss),var(--pine));border-radius:4px 0 0 4px;pointer-events:none}
 /* 弹窗居中后放大字号,提升可读性 */
 .drawer h2{font-size:clamp(30px,3.6vw,44px)}
 .drawer .about p{font-size:17.5px;line-height:1.95}
