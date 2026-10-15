@@ -4,11 +4,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
+<script>(function(){var n=null;try{n=localStorage.getItem('fatbruin-night')}catch(e){}var h=new Date().getHours();if(n?n==='1':(h>=19||h<6))document.documentElement.classList.add('night')})()</script>
 <link rel="stylesheet" href="{{CSS_BASE}}">
 <style>
 html,body{height:100%;overflow:hidden}
-:root{--card:rgba(249,243,231,.96)}
-#loading{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#d9cbb0;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-2);transition:opacity .6s;text-transform:uppercase}
+/* 禁用双击放大(保留双指缩放),避免连点「戳一下熊」时页面被放大 */
+html{touch-action:manipulation}
+:root{--card:rgba(var(--surface-rgb),.96)}
+#loading{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:var(--bg);font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-2);transition:opacity .6s;text-transform:uppercase}
 body.ready #loading{opacity:0;pointer-events:none}
 
 /* wood-grain panel */
@@ -22,7 +25,7 @@ body.ready #loading{opacity:0;pointer-events:none}
 nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 26px;background:linear-gradient(180deg,rgba(217,203,176,.92),rgba(217,203,176,0))}
 .brand{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.03em}
 .brand span{color:var(--amber)}
-.navlinks{display:flex;gap:2px;padding:4px;background:rgba(249,243,231,.72);border:1px solid var(--line);border-radius:999px}
+.navlinks{display:flex;gap:2px;padding:4px;background:rgba(var(--surface-rgb),.72);border:1px solid var(--line);border-radius:999px}
 nav a{padding:6px 15px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);white-space:nowrap}
 nav a:hover{background:rgba(111,143,82,.16);color:var(--ink);text-decoration:none}
 nav a.cur{background:var(--pine);color:#f3ead8}
@@ -56,21 +59,21 @@ h2{font-family:var(--disp);font-size:clamp(28px,3.4vw,40px);letter-spacing:-.03e
 p{text-wrap:pretty}
 
 /* hero */
-#hero .panel{border:none;box-shadow:none;padding:26px 34px 30px 30px;max-width:min(560px,52vw);background:radial-gradient(120% 110% at 20% 40%,rgba(243,234,216,.92),rgba(243,234,216,.55) 70%,transparent);border-radius:8px}
+#hero .panel{border:none;box-shadow:none;padding:26px 34px 30px 30px;max-width:min(560px,52vw);background:radial-gradient(120% 110% at 20% 40%,rgba(var(--surface-rgb),.92),rgba(var(--surface-rgb),.55) 70%,transparent);border-radius:8px}
 #hero .panel::before{display:none}
 h1{font-family:var(--disp);font-size:clamp(56px,10vw,124px);line-height:.84;letter-spacing:-.05em;margin:0;font-weight:800;color:var(--ink);text-shadow:0 3px 0 rgba(255,250,240,.45)}
 h1 em{font-style:normal;color:var(--clay)}
+.night h1{text-shadow:none}
 .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--soil);margin:0 0 18px}
 .lede{font-family:var(--serif);font-size:clamp(17px,1.9vw,20px);line-height:1.8;max-width:21ch;margin:24px 0 0;color:var(--ink)}
 .hints{display:flex;gap:8px;flex-wrap:wrap;margin-top:32px}
-.chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:6px 13px;border:1px solid var(--line);border-radius:999px;color:var(--soil);background:rgba(249,243,231,.7)}
-button.chip{cursor:pointer;font-family:var(--mono);border-color:var(--moss);color:var(--pine)}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:6px 13px;border:1px solid var(--line);border-radius:999px;color:var(--soil);background:rgba(var(--surface-rgb),.7)}
+button.chip{cursor:pointer;font-family:var(--mono);border-color:var(--moss);color:var(--link)}
 button.chip:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine)}
-#bearsay{position:fixed;left:50%;top:16%;transform:translate(-50%,8px);z-index:30;font-size:15px;background:#f9f3e7;border:1px solid var(--line);border-radius:16px;padding:8px 18px;box-shadow:0 10px 26px rgba(50,36,20,.2);opacity:0;transition:.35s cubic-bezier(.2,.8,.3,1);pointer-events:none;white-space:nowrap}
+#bearsay{position:fixed;left:50%;top:16%;transform:translate(-50%,8px);z-index:30;font-size:15px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 18px;box-shadow:0 10px 26px rgba(50,36,20,.2);opacity:0;transition:.35s cubic-bezier(.2,.8,.3,1);pointer-events:none;white-space:nowrap}
 #bearsay.on{opacity:1;transform:translate(-50%,-4px)}
 
-body.night nav{background:linear-gradient(180deg,rgba(70,79,104,.92),rgba(70,79,104,0))}
-body.night .brand{color:#f3ead8}
+.night nav{background:linear-gradient(180deg,rgba(70,79,104,.92),rgba(70,79,104,0))}
 
 /* about */
 .about p{margin:0 0 16px;font-size:16px}
@@ -102,7 +105,7 @@ body.night .brand{color:#f3ead8}
 /* contact */
 #contact .panel{text-align:left}
 .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-.links a{font-family:var(--mono);font-size:12.5px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(249,243,231,.6)}
+.links a{font-family:var(--mono);font-size:12.5px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(var(--surface-rgb),.6)}
 .links a:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine);text-decoration:none}
 .fine{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);letter-spacing:.08em;margin:30px 0 0}
 
@@ -113,6 +116,12 @@ nav{padding:12px 14px;flex-direction:column;align-items:stretch;gap:8px}
 .navlinks{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}
 .navlinks a{flex:1;text-align:center;padding-left:0;padding-right:0}
 .lede{max-width:none}
+/* 手机首屏标题区收紧,给小屋留出更多空间 */
+#hero .kicker{margin-bottom:12px;font-size:10.5px}
+#hero h1{font-size:46px}
+#hero .lede{font-size:15.5px;line-height:1.75;margin-top:14px}
+#hero .hints{margin-top:16px}
+#hero .chip{padding:8px 16px}
 #hero{left:14px;right:14px;top:auto;bottom:16px;transform:none}
 body.open #hero{transform:translateY(20px)}
 .drawer{width:calc(100vw - 28px);max-height:calc(100svh - 150px);top:calc(50% + 40px)}
@@ -127,6 +136,7 @@ body.open #hero{transform:translateY(20px)}
 .drawer .tl-note{font-size:13.5px}
 .drawer .links a{font-size:12px;padding:7px 13px}
 .panel,#hero .panel{max-width:100%;width:100%;padding:26px 22px 28px}
+#hero .panel{padding:20px}
 .facts div{grid-template-columns:78px 1fr;gap:10px}
 #bearsay{top:52%;bottom:auto}
 }

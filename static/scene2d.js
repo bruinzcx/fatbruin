@@ -78,11 +78,12 @@ const headEl = layer.querySelector('.bear-head');
 const lerpPose = (a, b, t) => Object.fromEntries(Object.keys(a).map(k => [k, a[k] + (b[k] - a[k]) * t]));
 // 手机首页:按实际布局把整间房放进导航栏与标题区之间的空档,不与两者重叠
 // .56 / .92 为房间在插画中所占的宽 / 高比例
+// 用 offsetTop / offsetHeight 取布局位置,不受标题区淡入淡出 transform 的影响
 function mobileHome(p) {
-  const top = document.querySelector('nav').getBoundingClientRect().bottom;
-  const gap = Math.max(document.getElementById('hero').getBoundingClientRect().top - top, 120);
+  const top = document.querySelector('nav').offsetHeight;
+  const gap = Math.max(document.getElementById('hero').offsetTop - top, 80);
   const base = Math.max(innerWidth / ROOM.w, innerHeight / ROOM.h);
-  const s = Math.min((innerWidth - 24) / (ROOM.w * .56), (gap - 16) / (ROOM.h * .92));
+  const s = Math.min((innerWidth - 40) / (ROOM.w * .56), (gap - 32) / (ROOM.h * .92));
   return { ...p, u: .5, v: .5, x: .5, y: (top + gap / 2) / innerHeight, z: s / base };
 }
 const forScreen = (p, open) => !MOBILE ? p
@@ -154,7 +155,7 @@ layer.querySelector('.hs[href="#about"]')?.addEventListener('click', poke);
 /* ---------- 昼夜:默认按本地时间,点窗户切换并记住选择 ---------- */
 const NIGHT_KEY = 'fatbruin-night';
 const nightImgs = [[layer.querySelector('.room-night'), ROOM.night], [layer.querySelector('.chair-night'), asset('chair-night.webp')]];
-async function setNight(on) {
+async function setNight(on, animate) {
   if (on) {
     // 夜景图首次用到时才加载,解码完再淡入,避免闪一下
     await Promise.all(nightImgs.map(([el, src]) => {
@@ -162,24 +163,24 @@ async function setNight(on) {
       return el.decode ? el.decode().catch(() => {}) : null;
     }));
   }
-  host.classList.toggle('night', on);
-  document.body.classList.toggle('night', on);
+  const root = document.documentElement;
+  if (animate) { root.classList.add('theme-anim'); setTimeout(() => root.classList.remove('theme-anim'), 1000); }
+  root.classList.toggle('night', on);
 }
-let night;
-try { night = localStorage.getItem(NIGHT_KEY); } catch {}
-const hour = new Date().getHours();
-setNight(night ? night === '1' : (hour >= 19 || hour < 6));
+// 初始晨昏已由页面开头的内联脚本写到 html.night,这里只负责补加载夜景图
+setNight(document.documentElement.classList.contains('night'));
 layer.querySelector('.hs-toggle')?.addEventListener('click', e => {
   e.preventDefault();
-  const on = !host.classList.contains('night');
+  const on = !document.documentElement.classList.contains('night');
   try { localStorage.setItem(NIGHT_KEY, on ? '1' : '0'); } catch {}
-  setNight(on);
+  setNight(on, true);
 });
 
 route();
 // 手机首页的房间位置依赖导航和标题区的实际尺寸,字体加载完、窗口变化后重新计算
 addEventListener('resize', route);
 document.fonts?.ready.then(route);
+if (MOBILE && !AMBIENT) new ResizeObserver(route).observe(document.getElementById('hero'));
 
 // 鼠标扫过软木板:碰到哪张便签,哪张就顺着鼠标方向轻摆一次
 const inPoly = (x, y, p) => {
