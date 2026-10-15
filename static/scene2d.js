@@ -76,8 +76,17 @@ const headEl = layer.querySelector('.bear-head');
 
 /* ---------- camera ---------- */
 const lerpPose = (a, b, t) => Object.fromEntries(Object.keys(a).map(k => [k, a[k] + (b[k] - a[k]) * t]));
-// 手机:房间放在屏幕上方,标题区在下
-const forScreen = (p, open) => MOBILE ? { ...p, x: .5, y: open ? .45 : .3, z: p.z * .55 } : p;
+// 手机首页:按实际布局把整间房放进导航栏与标题区之间的空档,不与两者重叠
+// .56 / .92 为房间在插画中所占的宽 / 高比例
+function mobileHome(p) {
+  const top = document.querySelector('nav').getBoundingClientRect().bottom;
+  const gap = Math.max(document.getElementById('hero').getBoundingClientRect().top - top, 120);
+  const base = Math.max(innerWidth / ROOM.w, innerHeight / ROOM.h);
+  const s = Math.min((innerWidth - 24) / (ROOM.w * .56), (gap - 16) / (ROOM.h * .92));
+  return { ...p, u: .5, v: .5, x: .5, y: (top + gap / 2) / innerHeight, z: s / base };
+}
+const forScreen = (p, open) => !MOBILE ? p
+  : open || AMBIENT ? { ...p, x: .5, y: open ? .45 : .3, z: p.z * .55 } : mobileHome(p);
 let want = forScreen(AMBIENT ? AMBIENT_POSE : POSE.hero), cur = { ...want };
 let station = 'hero';
 
@@ -168,6 +177,9 @@ layer.querySelector('.hs-toggle')?.addEventListener('click', e => {
 });
 
 route();
+// 手机首页的房间位置依赖导航和标题区的实际尺寸,字体加载完、窗口变化后重新计算
+addEventListener('resize', route);
+document.fonts?.ready.then(route);
 
 // 鼠标扫过软木板:碰到哪张便签,哪张就顺着鼠标方向轻摆一次
 const inPoly = (x, y, p) => {

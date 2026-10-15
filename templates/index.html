@@ -111,10 +111,21 @@ body{font-size:15px}
 nav{padding:12px 14px;flex-direction:column;align-items:stretch;gap:8px}
 .brand{text-align:center}
 .navlinks{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}
+.navlinks a{flex:1;text-align:center;padding-left:0;padding-right:0}
+.lede{max-width:none}
 #hero{left:14px;right:14px;top:auto;bottom:16px;transform:none}
 body.open #hero{transform:translateY(20px)}
 .drawer{width:calc(100vw - 28px);max-height:calc(100svh - 150px);top:calc(50% + 40px)}
 .drawer .panel{padding:28px 22px 30px}
+/* 手机弹窗:字号收小一档,显得精致 */
+.drawer h2{font-size:26px;margin-bottom:16px}
+.drawer .about p{font-size:15px;line-height:1.85}
+.drawer .facts div{font-size:13.5px}
+.drawer .p-title{font-size:16.5px}
+.drawer .p-sum{font-size:13px}
+.drawer .tl-role{font-size:16px}
+.drawer .tl-note{font-size:13.5px}
+.drawer .links a{font-size:12px;padding:7px 13px}
 .panel,#hero .panel{max-width:100%;width:100%;padding:26px 22px 28px}
 .facts div{grid-template-columns:78px 1fr;gap:10px}
 #bearsay{top:52%;bottom:auto}
