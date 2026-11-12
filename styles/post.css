@@ -8,6 +8,12 @@
 
 main{position:relative;z-index:10;height:100svh;padding:72px clamp(24px,7vw,110px) 28px;display:flex;justify-content:center}
 article{width:100%;max-width:1040px;height:100%;overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 30px 80px rgba(35,24,12,.4);padding:64px 0 64px}
+/* 正文滚动条:细条、随晨昏配色,不抢阅读注意力 */
+article{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+article::-webkit-scrollbar{width:8px}
+article::-webkit-scrollbar-track{background:transparent;margin:10px 0}
+article::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+article::-webkit-scrollbar-thumb:hover{background-color:var(--ink-2)}
 article>*{padding:0 clamp(26px,7vw,96px)}
 .meta{display:flex;gap:16px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);margin:0 0 14px}
 h1{font-family:var(--disp);font-size:clamp(30px,4.6vw,46px);line-height:1.18;letter-spacing:-.035em;margin:0 0 16px;font-weight:600;text-wrap:pretty}

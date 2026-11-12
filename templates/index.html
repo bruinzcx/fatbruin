@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>fatbruin — 一只热爱生活的胖熊</title>
+<link rel="icon" type="image/svg+xml" href="{{BASE}}favicon.svg">
+<title>fatbruin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
@@ -68,7 +69,7 @@ h1{font-family:var(--disp);font-size:clamp(56px,10vw,124px);line-height:.84;lett
 h1 em{font-style:normal;color:var(--clay)}
 .night h1{text-shadow:none}
 .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--soil);margin:0 0 18px}
-.lede{font-family:var(--serif);font-size:clamp(17px,1.9vw,20px);line-height:1.8;max-width:21ch;margin:24px 0 0;color:var(--ink)}
+.lede{font-family:var(--serif);font-size:clamp(16px,1.4vw,18px);line-height:1.8;max-width:25em;margin:24px 0 0;color:var(--ink)}
 .hints{display:flex;gap:8px;flex-wrap:wrap;margin-top:32px}
 .chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:6px 13px;border:1px solid var(--line);border-radius:999px;color:var(--soil);background:rgba(var(--surface-rgb),.7)}
 button.chip{cursor:pointer;font-family:var(--mono);border-color:var(--moss);color:var(--link)}
@@ -96,13 +97,15 @@ button.chip:hover{background:var(--pine);color:#f3ead8;border-color:var(--pine)}
 .more{display:inline-block;margin-top:22px;font-family:var(--mono);font-size:12px;letter-spacing:.1em}
 
 /* timeline */
+.tl-quote{margin:-6px 0 26px;font-family:var(--serif);font-size:15px;line-height:1.7;color:var(--ink-2)}
+.tl-quote cite{margin-left:6px;font-style:normal;font-size:13px;opacity:.75}
 .tl{margin:0;padding:0 0 0 26px;list-style:none;border-left:2px solid var(--line)}
 .tl li{position:relative;padding:0 0 26px 22px}
 .tl li:last-child{padding-bottom:0}
-.tl li::before{content:"";position:absolute;left:-33px;top:7px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:2.5px solid var(--moss)}
+.tl li::before{content:"";position:absolute;box-sizing:border-box;left:-35px;top:0;width:16px;height:16px;border-radius:50%;background:var(--paper);border:2.5px solid var(--moss)}
 .tl li.now::before{background:var(--clay);border-color:var(--clay)}
-.tl-year{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink-2)}
-.tl-role{font-family:var(--serif);font-size:17.5px;font-weight:600;margin:2px 0 4px}
+.tl-year{margin:0;line-height:16px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink-2)}
+.tl-role{font-family:var(--serif);font-size:17.5px;font-weight:600;margin:6px 0 4px}
 .tl-note{font-size:14px;color:var(--ink-2);margin:0;line-height:1.65}
 
 /* contact */
@@ -157,9 +160,9 @@ body.open #hero{transform:translateY(20px)}
 <main>
 <section id="hero" data-station="hero" data-screen-label="Hero">
 <div class="panel">
-<p class="kicker">Mobile / AI Engineer · Shanghai</p>
+<p class="kicker">App × Agent Engineer · Beijing</p>
 <h1>fat<em>bruin</em></h1>
-<p class="lede">一只热爱生活的胖熊。写移动端,也写 AI。住在这间暖烘烘的小屋里。</p>
+<p class="lede">一只胖熊,写了十年代码,从 App 一路写到 Agent。白天和模型、真机打交道,晚上在这间小屋里做饭、看云、写点心得。灯常亮着,进来坐坐。</p>
 <div class="hints"><button class="chip" id="poke">戳一下熊</button></div>
 </div>
 </section>
@@ -168,13 +171,13 @@ body.open #hero{transform:translateY(20px)}
 <div class="panel about">
 <a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">About / 关于</p>
-<h2>写代码的胖熊,<br>顺便过好日子</h2>
-<p>移动端与 AI 工程师。做过 iOS、Android 和跨端框架,现在更多时间花在把模型能力塞进真实产品里——推理延迟、端上部署、以及那些「demo 很惊艳、上线就翻车」的问题。</p>
-<p>信一句话:先把东西跑起来,再谈优雅。剩下的时间用来做饭、走路、看云,以及把这间小屋收拾得更舒服一点。</p>
+<h2>fatbruin,爱食人间烟火~</h2>
+<p>移动端出身的 Agent 全栈工程师。具备 iOS、Android 与 Flutter 跨端开发经验,熟悉 App 从需求、开发到构建、发布的完整交付链路,了解真实产品里客户端的约束与体验要求。</p>
+<p>曾主导移动端自动化测试体系建设,基于大模型、MCP 与 Agent 工作流实现真机自动化操作与用例生成,并打通配套的服务端与工具链。希望继续做 Agent 相关的全栈工作,把模型能力真正落到 App 和用户手里。信一句话:先把东西跑起来,再谈优雅。</p>
 <dl class="facts">
-<div><dt>Now</dt><dd>端侧推理与移动端 AI 体验</dd></div>
-<div><dt>Stack</dt><dd>Swift · Kotlin · Python · three.js</dd></div>
-<div><dt>Focus</dt><dd>On-device LLM / 多模态交互</dd></div>
+<div><dt>Now</dt><dd>Agent 全栈 · 移动端背景</dd></div>
+<div><dt>Stack</dt><dd>Swift · Objective-C · Kotlin · Dart · Python</dd></div>
+<div><dt>Focus</dt><dd>LLM Agent · MCP · App 端智能化</dd></div>
 <div><dt>Off hours</dt><dd>做饭、citywalk、拍云</dd></div>
 <div><dt>Weight</dt><dd>据熊自称 92 kg</dd></div>
 </dl>
@@ -185,7 +188,8 @@ body.open #hero{transform:translateY(20px)}
 <div class="panel">
 <a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">Writing / 文章</p>
-<h2>写下来的东西</h2>
+<h2>躬行所得</h2>
+<blockquote class="tl-quote">纸上得来终觉浅,绝知此事要躬行。<cite>——陆游《冬夜读书示子聿》</cite></blockquote>
 <div class="posts" id="posts">{{POSTS}}</div>
 <a class="more" href="{{BASE}}posts/">全部文章 →</a>
 </div>
@@ -195,12 +199,15 @@ body.open #hero{transform:translateY(20px)}
 <div class="panel">
 <a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">Timeline / 经历</p>
-<h2>软木板上钉着的那些年</h2>
+<h2>行远自迩</h2>
+<blockquote class="tl-quote">君子之道,辟如行远必自迩,辟如登高必自卑。<cite>——《中庸》</cite></blockquote>
 <ul class="tl">
-<li class="now"><p class="tl-year">2024 — Now</p><p class="tl-role">Senior AI Engineer</p><p class="tl-note">负责端侧模型推理与移动端 AI 交互,把多模态能力落进日常功能里。</p></li>
-<li><p class="tl-year">2021 — 2024</p><p class="tl-role">Mobile Tech Lead</p><p class="tl-note">带一个五人的客户端团队,重构了架构与发版流程,崩溃率降到 0.1% 以下。</p></li>
-<li><p class="tl-year">2018 — 2021</p><p class="tl-role">iOS Engineer</p><p class="tl-note">从零参与一款千万级用户产品,负责性能优化与设计系统落地。</p></li>
-<li><p class="tl-year">2014 — 2018</p><p class="tl-role">B.Eng, Computer Science</p><p class="tl-note">写了第一个 App,以及第一只很丑的 3D 熊。</p></li>
+<li class="now"><p class="tl-year">2023 — Now</p><p class="tl-role">优幕科技 · 高级 iOS 研发工程师</p><p class="tl-note">负责 UMU 互动学习 App 开发,借助 AI Agent 工作流一人承接 iOS、Android 与 Flutter 多端需求;主导移动端自动化测试体系建设,探索大模型驱动的真机自动化。</p></li>
+<li><p class="tl-year">2020 — 2023</p><p class="tl-role">36氪 · iOS 高级工程师</p><p class="tl-note">36氪 App iOS 端核心开发,崩溃率 0.04% 以下;推动组件化,从 0 到 1 完成创投平台小程序与 CI/CD 流程。</p></li>
+<li><p class="tl-year">2020</p><p class="tl-role">快来直播 · iOS 开发工程师</p><p class="tl-note">负责直播 App 娱乐版功能开发;搭建团队研发效能工具链,打通打包、崩溃符号化与消息通知的自动化闭环。</p></li>
+<li><p class="tl-year">2018 — 2020</p><p class="tl-role">融易通捷航 · iOS 开发工程师</p><p class="tl-note">中国联航 App 机票预定核心流程重构,接入 RN 跨平台;独立完成行李销售 App 落地。</p></li>
+<li><p class="tl-year">2017 — 2018</p><p class="tl-role">创世华保 · .NET 开发</p><p class="tl-note">河南省商务公共服务云平台的网站开发与维护。</p></li>
+<li><p class="tl-year">2013 — 2017</p><p class="tl-role">河南大学 · 网络工程 本科</p><p class="tl-note">写了第一个 App,以及第一只很丑的 3D 熊。</p></li>
 </ul>
 </div>
 </section>
@@ -209,10 +216,10 @@ body.open #hero{transform:translateY(20px)}
 <div class="panel">
 <a class="close" href="#">← 回到房间</a>
 <p class="eyebrow">Contact / 联系</p>
-<h2>来聊聊</h2>
-<p style="margin:0 0 18px;color:var(--ink-2);font-size:15.5px">有意思的项目、想合作的事,或者只是想说句话,都欢迎。</p>
-<div class="links"><a href="mailto:hi@fatbruin.me">hi@fatbruin.me</a><a href="#">GitHub</a><a href="#">X / Twitter</a><a href="#">微信公众号</a><a href="{{BASE}}rss.xml">RSS</a></div>
-<p class="fine">© 2026 fatbruin · 内容为占位文案,替换即可</p>
+<h2>以文会友</h2>
+<blockquote class="tl-quote">君子以文会友,以友辅仁。<cite>——《论语》</cite></blockquote>
+<div class="links"><a href="mailto:zcx_bruin@foxmail.com">zcx_bruin@foxmail.com</a><a href="https://github.com/zcx4u" target="_blank" rel="noopener">GitHub</a><a href="https://x.com/bruinchxb" target="_blank" rel="noopener">X / Twitter</a><a href="{{BASE}}rss.xml">RSS</a></div>
+<p class="fine">© 2026 fatbruin</p>
 </div>
 </section>
 </main>

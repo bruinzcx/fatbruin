@@ -133,6 +133,8 @@ function loadPosts() {
       summary: meta.summary || '',
       html: md.render(body),
       sortKey: meta.date || file,
+      // hidden: true 的文章照常生成页面,但不进首页、归档、RSS、sitemap 和上下篇
+      hidden: String(meta.hidden) === 'true',
     });
   }
   // 新 → 旧
@@ -218,7 +220,7 @@ function renderArchive(posts, template, css = {}) {
   }
   const body = [...groups.entries()]
     .map(([year, list]) =>
-      `<section class="yr"><h2 class="yr-h">${esc(year)}<span>${list.length} 篇</span></h2><ul class="arc">` +
+      `<section class="yr"><h2 class="yr-h">${esc(year)}</h2><ul class="arc">` +
       list
         .map(
           (p) =>
@@ -283,7 +285,7 @@ function writeFeeds(posts) {
     '<channel>' +
     '<title>fatbruin</title>' +
     `<link>${xe(abs(''))}</link>` +
-    '<description>一只热爱生活的胖熊。写移动端,也写 AI。</description>' +
+    '<description>一只胖熊,从 App 写到 Agent。</description>' +
     '<language>zh-CN</language>' +
     `<lastBuildDate>${(posts.length ? pubDate(posts[0], 0) : new Date()).toUTCString()}</lastBuildDate>` +
     `<atom:link href="${xe(abs('rss.xml'))}" rel="self" type="application/rss+xml"/>` +
@@ -364,7 +366,8 @@ function build() {
   fs.rmSync(DIRS.dist, { recursive: true, force: true });
   fs.mkdirSync(DIRS.dist, { recursive: true });
 
-  const posts = loadPosts();
+  const all = loadPosts();
+  const posts = all.filter((p) => !p.hidden);
   const css = emitStyles();
   const indexTpl = tpl('index.html');
   const postTpl = tpl('post.html');
@@ -377,6 +380,11 @@ function build() {
     fs.mkdirSync(dir, { recursive: true });
     // 列表是新→旧,所以「上一篇」= 更新的一篇 = i-1
     fs.writeFileSync(path.join(dir, 'index.html'), renderPost(p, posts[i - 1], posts[i + 1], postTpl, css));
+  });
+  all.filter((p) => p.hidden).forEach((p) => {
+    const dir = path.join(DIRS.dist, 'posts', p.slug);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), renderPost(p, null, null, postTpl, css));
   });
 
   if (archiveTpl) {
