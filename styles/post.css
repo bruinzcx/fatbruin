@@ -219,4 +219,6 @@ body.no-toc .nav-fallback{display:inline-block}
   .tw{overflow-x:hidden}
   .tw table{width:100%;table-layout:fixed}
   .tw th,.tw td{overflow-wrap:anywhere;word-break:break-word}
+  /* Safari 的 text-wrap:pretty 会为平衡行长提前折行,窄屏下显得每行写不满;改回普通折行并两端对齐 */
+  article p,.sum,article li,blockquote{text-wrap:wrap;text-align:justify}
 }
