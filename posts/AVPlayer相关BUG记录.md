@@ -1,7 +1,7 @@
 ---
 title: AVPlayer相关BUG记录
 date: 2021.08.25
-group: Notes
+group: Tools
 slug: avplayer-bugs
 summary: AVPlayer 倍速被重置等问题的排查记录:缓冲恢复时手动 play() 带来的副作用。
 ---

@@ -144,6 +144,17 @@ function loadPosts() {
 
 // --- 渲染 -----------------------------------------------------------------
 const tpl = (name) => fs.readFileSync(path.join(DIRS.templates, name), 'utf8');
+// 分享卡片(Open Graph / Twitter)。需要完整 URL,未配置站点地址时不输出
+function og({ title, desc, path = '', type = 'website' }) {
+  if (!SITE) return '';
+  return [
+    ['og:type', type], ['og:site_name', 'fatbruin'], ['og:title', title], ['og:description', desc],
+    ['og:url', abs(path)], ['og:image', abs('og.jpg')], ['og:image:width', '1200'], ['og:image:height', '630'],
+  ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join('') +
+    `<meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="${esc(abs(path))}">`;
+}
+const SITE_DESC = '一只胖熊,写了十年代码,从 App 一路写到 Agent。';
+
 const fill = (t, vars) => t.replace(/\{\{(\w+)\}\}/g, (_, k) => (k in vars ? vars[k] : ''));
 
 function renderIndex(posts, template, css = {}) {
@@ -157,7 +168,7 @@ function renderIndex(posts, template, css = {}) {
         `<p class="p-sum">${esc(p.summary)}</p></a>`
     )
     .join('');
-  return fill(template, { POSTS: list, BASE, CSS_BASE: css.base || '', CSS_POST: css.post || '' });
+  return fill(template, { POSTS: list, BASE, CSS_BASE: css.base || '', CSS_POST: css.post || '', DESC: esc(SITE_DESC), OG: og({ title: 'fatbruin', desc: SITE_DESC }) });
 }
 
 function renderPost(post, prev, next, template, css = {}) {
@@ -182,6 +193,7 @@ function renderPost(post, prev, next, template, css = {}) {
     NOTOC: buildToc(post.html) ? '' : ' no-toc',
     TITLE: esc(post.title),
     SUMMARY: esc(post.summary),
+    OG: og({ title: post.title, desc: post.summary || SITE_DESC, path: `posts/${post.slug}/`, type: 'article' }),
     ARTICLE: article,
     NAV_JSON: JSON.stringify({
       prev: prev ? u(`posts/${prev.slug}/`) : null,
@@ -224,7 +236,7 @@ function renderArchive(posts, template, css = {}) {
       list
         .map(
           (p) =>
-            `<li><a href="${u(`posts/${p.slug}/`)}">` +
+            `<li data-g="${esc(p.group)}" data-k="${esc((p.title + ' ' + p.summary + ' ' + p.group).toLowerCase())}"><a href="${u(`posts/${p.slug}/`)}">` +
             `<span class="a-d">${esc(p.date)}</span>` +
             `<span class="a-t">${esc(p.title)}</span>` +
             `<span class="a-g">${esc(p.group)}</span></a></li>`
@@ -239,6 +251,8 @@ function renderArchive(posts, template, css = {}) {
     CSS_BASE: css.base || '',
     CSS_POST: css.post || '',
     COUNT: String(posts.length),
+    GROUPS: [...new Set(posts.map((p) => p.group))].map((g) => `<button type="button" class="g-chip" data-g="${esc(g)}">${esc(g)}</button>`).join(''),
+    OG: og({ title: '全部文章 — fatbruin', desc: SITE_DESC, path: 'posts/' }),
     ARCHIVE: body,
   });
 }

@@ -2,19 +2,21 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="{{BASE}}favicon.svg">
 <title>全部文章 — fatbruin</title>
-<meta name="description" content="fatbruin 的全部文章索引,共 {{COUNT}} 篇。">
+<meta name="description" content="fatbruin 的全部文章索引,共 {{COUNT}} 篇。">{{OG}}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="alternate" type="application/rss+xml" title="fatbruin" href="{{BASE}}rss.xml">
 <script>(function(){var n=null;try{n=localStorage.getItem('fatbruin-night')}catch(e){}var h=new Date().getHours();if(n?n==='1':(h>=19||h<6))document.documentElement.classList.add('night')})()</script>
 <link rel="stylesheet" href="{{CSS_BASE}}">
 <link rel="stylesheet" href="{{CSS_POST}}">
-<style>.arc-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.arc-head h1{margin-bottom:0}.sort{flex:none;display:grid;place-items:center;width:26px;height:26px;padding:0;color:inherit;background:none;border:1px solid currentColor;border-radius:50%;cursor:pointer;opacity:.6}.sort svg{transition:transform .2s}.sort.asc svg{transform:scaleY(-1)}.sort:hover{opacity:1}</style></head>
+<style>.arc-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.arc-head h1{margin-bottom:0}.sort{flex:none;display:grid;place-items:center;width:26px;height:26px;padding:0;color:inherit;background:none;border:1px solid currentColor;border-radius:50%;cursor:pointer;opacity:.6}.sort svg{transition:transform .2s}.sort.asc svg{transform:scaleY(-1)}.sort:hover{opacity:1}.arc-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:22px 0 4px}.g-chips{display:flex;flex-wrap:wrap;gap:6px;flex:1}.g-chip{font:inherit;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink-2);cursor:pointer}.g-chip:hover{color:var(--ink)}.g-chip.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}#q{font:inherit;font-size:14px;width:160px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);outline:none}#q:focus{border-color:var(--ink-2)}.arc-empty{color:var(--ink-2);margin:28px 0}@media (max-width:820px){#q{width:100%}}</style></head>
 <body>
 <div id="scene"></div>
 <div class="topbar"><div class="navl"><a class="back" href="{{BASE}}#writing">← 回到小屋</a></div><div class="brand">fat<span>bruin</span></div></div>
 <main><article id="art">
 <div class="arc-head"><h1>全部文章</h1><button type="button" class="sort" id="sort" aria-label="切换排序" title="最新在前"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v12M1.5 11.5 4 14l2.5-2.5"/><path d="M9 4h6M9 8h4.5M9 12h3"/></svg></button></div>
+<div class="arc-tools"><div class="g-chips" role="group" aria-label="按分组筛选">{{GROUPS}}</div><input type="search" id="q" placeholder="搜索" aria-label="搜索文章" autocomplete="off"></div>
+<p class="arc-empty" id="empty" hidden>没有找到</p>
 <div id="arc-list">{{ARCHIVE}}</div>
 </article></main>
 
@@ -31,6 +33,27 @@ sortBtn.addEventListener('click', function(){
   sortBtn.classList.toggle('asc', !newest);
   sortBtn.title = newest ? '最新在前' : '最早在前';
 });
-addEventListener('keydown', function(e){ if (e.key === 'Escape') location.href = '{{BASE}}#writing'; });
+(function(){
+  var chips = [].slice.call(document.querySelectorAll('.g-chip')), q = document.getElementById('q'), empty = document.getElementById('empty'), group = '';
+  function apply(){
+    var kw = q.value.trim().toLowerCase(), shown = 0;
+    [].slice.call(arcList.children).forEach(function(sec){
+      var n = 0;
+      [].slice.call(sec.querySelectorAll('li')).forEach(function(li){
+        var ok = (!group || li.dataset.g === group) && (!kw || li.dataset.k.indexOf(kw) > -1);
+        li.hidden = !ok; if (ok) n++;
+      });
+      sec.hidden = !n; shown += n;
+    });
+    empty.hidden = shown > 0;
+  }
+  chips.forEach(function(c){ c.addEventListener('click', function(){
+    group = group === c.dataset.g ? '' : c.dataset.g;
+    chips.forEach(function(x){ x.classList.toggle('on', x.dataset.g === group); });
+    apply();
+  }); });
+  q.addEventListener('input', apply);
+})();
+addEventListener('keydown', function(e){ if (e.key === 'Escape' && e.target.tagName !== 'INPUT') location.href = '{{BASE}}#writing'; });
 </script>
 </body></html>

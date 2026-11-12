@@ -209,3 +209,14 @@ body.no-toc .nav-fallback{display:inline-block}
 /* 有语言标签时给代码留出顶部空间,避免和标签重叠 */
 .cb:has(.cb-l) pre{padding-top:30px}
 @media (max-width:820px){ .cb-c{opacity:1} }
+
+/* 手机端:正文只上下滚动。长链接/长单词折行,代码块与表格不再横向滑动 */
+@media (max-width:820px){
+  html,body{overflow-x:hidden}
+  article{overflow-x:hidden;overflow-wrap:anywhere;touch-action:pan-y}
+  pre{white-space:pre-wrap;word-break:break-all;overflow-x:hidden}
+  pre code{white-space:inherit}
+  .tw{overflow-x:hidden}
+  .tw table{width:100%;table-layout:fixed}
+  .tw th,.tw td{overflow-wrap:anywhere;word-break:break-word}
+}

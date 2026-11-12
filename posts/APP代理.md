@@ -1,7 +1,7 @@
 ---
 title: APP内部代理
 date: 2021.01.18
-group: Notes
+group: Tools
 slug: app-proxy
 summary: 不用每次去 Wi-Fi 设置里手动配代理:在 App 内部直接接管网络代理,抓包与日常使用两不误。
 ---
